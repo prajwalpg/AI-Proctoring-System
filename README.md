@@ -75,19 +75,19 @@ AI-Proctoring-System
 1. Clone the repository
 
 
-git clone https://github.com/prajwalpg/AI-Proctoring-System.git
+```git clone https://github.com/prajwalpg/AI-Proctoring-System.git```
 
 
 2. Navigate to the project folder
 
 
-cd AI-Proctoring-System
+```cd AI-Proctoring-System```
 
 
 3. Run the project using a local server
 
 
-npx serve
+```npx serve```
 
 
 4. Open the browser and start the exam monitoring system.
