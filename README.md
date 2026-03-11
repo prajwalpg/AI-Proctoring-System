@@ -27,7 +27,7 @@ It combines **browser monitoring**, **AI-based face detection**, and **audio mon
 
 ## Project Architecture
 
-
+```
 AI-Proctoring-System
 │
 ├── index.html → Main UI
@@ -55,7 +55,7 @@ AI-Proctoring-System
 │ └── utils/
 │ └── timer.js
 
-
+```
 ---
 
 ## Technologies Used
