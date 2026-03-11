@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Proctored Exam</title>
+    <link rel="icon" href="data:,">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            user-select: none;
+        }
+
+        .toast-enter {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .toast-exit {
+            animation: fadeOut 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div id="pre-exam-screen" class="flex items-center justify-center h-screen">
+        <div class="bg-white p-8 rounded-xl shadow-xl w-[500px] text-center">
+            <h1 class="text-2xl font-bold mb-4">
+                Assessment
+            </h1>
+            <p class="text-gray-600 mb-6">
+                This exam is monitored by AI.
+            </p>
+            <div class="bg-blue-50 p-4 rounded-lg text-sm text-left mb-6">
+                <p class="font-semibold mb-2">Rules:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>Stay in fullscreen</li>
+                    <li>Do not switch tabs</li>
+                    <li>Enable webcam</li>
+                    <li>No copy paste allowed</li>
+                    <li>Violation may terminate your exam</li>
+                </ul>
+            </div>
+            <button id="start-btn" class="bg-blue-600 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-700">
+                Agree & Start Exam
+            </button>
+        </div>
+    </div>
+    <div id="exam-interface" class="hidden flex flex-col h-screen">
+        <header class="bg-white shadow flex justify-between items-center px-6 py-4">
+            <div>
+                <h2 class="font-bold text-lg">Assessment</h2>
+                <p class="text-sm text-gray-500">
+                    Candidate: Demo User
+                </p>
+            </div>
+            <div class="flex items-center gap-6">
+                <div id="timer-display" class="font-mono text-xl bg-gray-200 px-4 py-2 rounded">
+                    59:00
+                </div>
+                <button id="submit-btn" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-green-700">
+                    Submit Exam
+                </button>
+            </div>
+        </header>
+        <main class="flex flex-1 overflow-hidden">
+            <div class="flex-1 p-8 overflow-y-auto">
+                <div class="max-w-3xl mx-auto space-y-10">
+                    <div class="bg-white p-6 rounded shadow">
+                        <h3 class="font-bold mb-4">
+                            Question 1
+                        </h3>
+                        <p class="mb-4">
+                            What is output of:
+                        </p>
+                        <pre class="bg-gray-900 text-green-400 p-3 rounded mb-4">
+console.log(typeof null);
+</pre>
+                        <label class="block mb-2">
+                            <input type="radio" name="q1"> "null"
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="q1"> "undefined"
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="q1"> "object"
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="q1"> Error
+                        </label>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow">
+
+                        <h3 class="font-bold mb-4">
+                            Question 2
+                        </h3>
+                        <p class="mb-4">
+                            Which HTML element defines footer?
+                        </p>
+                        <label class="block mb-2">
+                            <input type="radio" name="q2"> &lt;bottom&gt;
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="q2"> &lt;footer&gt;
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="q2"> &lt;section&gt;
+                        </label>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow">
+
+                        <h3 class="font-bold mb-4">
+                            Question 3
+                        </h3>
+                        <p class="mb-4">
+                            Write a JS function to reverse a string
+                        </p>
+                        <textarea class="w-full border rounded p-3 h-32" placeholder=""></textarea>
+                    </div>
+                </div>
+            </div>
+            <aside class="w-[320px] bg-white border-l flex flex-col">
+                <div class="p-4 border-b">
+                    <h3 class="text-sm font-bold mb-2">
+                        Live Proctoring
+                    </h3>
+                    <div class="relative w-full rounded overflow-hidden">
+                        <video id="video" autoplay muted playsinline class="w-full"></video>
+                    </div>
+                </div>
+                <div class="flex-1 p-4 overflow-y-auto">
+
+                    <h3 class="text-sm font-bold mb-2">
+                        System Logs
+                    </h3>
+
+                    <pre id="logs" class="bg-black text-green-400 p-3 rounded text-xs h-full overflow-y-auto">
+Initializing...
+</pre>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <div id="end-exam-screen" class="hidden fixed inset-0 bg-white flex items-center justify-center">
+        <div class="bg-white p-8 rounded shadow text-center">
+            <h2 id="end-title" class="text-2xl font-bold mb-4">
+                Exam Submitted
+            </h2>
+            <p id="end-message" class="mb-6">
+                Your exam has been recorded.
+            </p>
+            <p class="mb-4">
+                Violations:
+                <span id="final-proctor-score">0</span>
+            </p>
+            <button onclick="window.location.reload()" class="bg-black text-white px-5 py-2 rounded">
+                Restart
+            </button>
+        </div>
+    </div>
+    <div id="toast-container" class="fixed bottom-6 right-6 space-y-2">
+    </div>
+    <!-- FULLSCREEN WARNING -->
+    <div id="fullscreen-warning"
+        class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+
+        <div class="bg-white p-10 rounded-xl text-center shadow-xl max-w-md">
+
+            <h2 class="text-2xl font-bold mb-4 text-red-600">
+                Fullscreen Required
+            </h2>
+
+            <p class="text-gray-600 mb-6">
+                You exited fullscreen. The assessment must run in fullscreen mode.
+            </p>
+
+            <button id="return-fullscreen-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+                Return to Fullscreen
+            </button>
+
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js/dist/face-api.min.js"></script>
+    <script type="module">
+        import { returnToFullscreen } from "./js/browser/fullscreenDetector.js";
+        document.getElementById("return-fullscreen-btn")?.addEventListener("click", returnToFullscreen);
+    </script>
+    <script type="module" src="./js/app.js"></script>
+    <script>
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "F12") {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === "I") {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.key === "u") {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>
